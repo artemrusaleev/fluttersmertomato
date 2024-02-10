@@ -72,7 +72,7 @@
         function setId() {
             const field = document.getElementById('organization_id');
             const id = field.value;
-            flutter.src = `/?id=${id}`;
+            flutter.src = `https://artemrusaleev.github.io/fluttersmertomato/?id=${id}`;
 
             const configUrl = `https://${id}.smartomato.ru/basket/mobile_application_config`;
             fetch(configUrl).then((r) => r.json().then((r) => editor.set(r ?? {})));
