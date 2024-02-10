@@ -1,0 +1,118 @@
+<HTML>
+
+<head>
+    <title>App config</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        body {
+            background: #3c3c3c;
+            color: #fff;
+            font-family: sans-serif;
+        }
+
+        input,
+        label {
+            font-size: 16pt;
+            margin-bottom: 15px;
+        }
+
+        .wrapper {
+            display: flex;
+        }
+
+        .sm_config {
+            padding: 10px;
+            width: 25%;
+            min-width: 530px;
+        }
+
+        #input {
+            width: 100%;
+            height: 95%;
+        }
+
+        .sm_app {
+            width: 50vh;
+            height: 100vh;
+        }
+
+        #flutter {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/jsoneditor@10.0.0/dist/jsoneditor.min.css" rel="stylesheet"
+        type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/jsoneditor@10.0.0/dist/jsoneditor.min.js"></script>
+
+    <script type="text/javascript">
+        let flutter, editor;
+        window.onload = onLoad;
+
+        function onLoad() {
+            console.log('loaded');
+            const ok = document.getElementById('ok');
+            ok.addEventListener('click', setId);
+            flutter = document.getElementById('flutter');
+
+            const input = document.getElementById('input');
+            const options = {
+                mode: 'code',
+                onChange: listener,
+                theme: 'ace/theme/twilight',
+            };
+            editor = new JSONEditor(input, options);
+        }
+
+        function setId() {
+            const field = document.getElementById('organization_id');
+            const id = field.value;
+            flutter.src = `/?id=${id}`;
+
+            const configUrl = `https://${id}.smartomato.ru/basket/mobile_application_config`;
+            fetch(configUrl).then((r) => r.json().then((r) => editor.set(r ?? {})));
+        }
+
+        function listener() {
+            try {
+                const data = editor.get();
+                postConfig(data);
+            } catch (_) {
+            }
+        }
+
+        function postConfig(config) {
+            console.log(config);
+            flutter.contentWindow.postMessage(config, 'https://flutter.smartomato.ru/');
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <div class="sm_config">
+            <label for="organization_id">ORGANIZATION ID:</label>
+            <input id="organization_id" type="text">
+            <input id="ok" type="button" value="SET">
+            <br />
+            <div id="input"></div>
+        </div>
+
+        <div class="sm_app">
+            <iframe id="flutter"></iframe>
+        </div>
+
+        <script>
+        </script>
+
+    </div>
+</body>
+
+</HTML>
